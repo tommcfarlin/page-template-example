@@ -56,7 +56,7 @@ class Page_Template_Plugin {
 	public static function getInstance() {
 
 		if( null == self::$instance ) {
-			self::$instance = new Page_Template_plugin();
+			self::$instance = new Page_Template_Plugin();
 		} // end if
 
 		return self::$instance;
