@@ -123,7 +123,7 @@ class Page_Template_Plugin {
 	public function deregister_project_template() {
 		
 		// Get the path to the theme
-		$theme_dir = get_template_directory();
+		$theme_dir = get_stylesheet_directory();
 		$template_path = $theme_dir . '/template-example.php';
 		
 		// If the template file is in the theme path, delete it.
@@ -141,7 +141,7 @@ class Page_Template_Plugin {
 	 * @return string The destination to the plugin directory relative to the currently active theme
 	 */
 	private function get_template_destination() {
-		return get_template_directory() . '/template-example.php';
+		return get_stylesheet_directory() . '/template-example.php';
 	} // end get_template_destination
 
 	/**
