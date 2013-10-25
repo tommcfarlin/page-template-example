@@ -44,6 +44,11 @@ class Page_Template_Plugin {
 	/** A reference to an instance of this class. **/
 	private static $instance;
 
+	/**
+	 * @var      array
+	 */
+	protected $templates = array();
+
 	/*--------------------------------------------*
 	 * Constructor
 	 *--------------------------------------------*/
@@ -72,9 +77,21 @@ class Page_Template_Plugin {
 	private function __construct() {
 
 		add_action( 'init', array( $this, 'plugin_textdomain' ) );
+		
+		// Add a filter to the page attributes metabox to inject our template into the page template cache.
+		add_filter('page_attributes_dropdown_pages_args', array( $this, 'register_project_templates' ) );
+		
+		// Add a filter to the save post in order to inject out template into the page cache
+		add_filter('wp_insert_post_data', array( $this, 'register_project_templates' ) );
+		
+		// Add a filter to the template include in order to determine if the page has our template assigned and return it's path
+		add_filter('template_include', array( $this, 'view_project_template') );
 
-		register_activation_hook( __FILE__, array( $this, 'register_project_template' ) );
-		register_deactivation_hook( __FILE__, array( $this, 'deregister_project_template' ) );
+		// Add your templates to this array.
+		$this->templates = array(
+			'template-example.php' => 'Example Page Template',
+		);
+		
 		
 	} // end constructor
 
@@ -93,114 +110,59 @@ class Page_Template_Plugin {
 	} // end plugin_textdomain
 
 	/*--------------------------------------------*
-	 * Activation and Deactivation Hooks
+	 * Template Registration & Usage Hooks
 	 *--------------------------------------------*/
 
 	/**
-	 * Copies the template from the `views/templates` directory to the root of the active theme
-	 * directory so that it can be applied to pages.
+	 * Adds our template to the pages cache in order to trick wordpress
+	 * in thinking its a real file.
 	 *
 	 * @verison	1.0
 	 * @since	1.0
 	 */
-	public function register_project_template() {
+	public function register_project_templates( $atts ) {
 
-		// Get the template source and destination for copying from the plugin to the theme directory
-		$template_destination = $this->get_template_destination();
-		$template_source = $this->get_template_source();
+		// create the key used for the themes cache
+		$cache_key = 'page_templates-' . md5( get_theme_root() . '/' . get_stylesheet() );
 
-		// Now actually copy the template file from the plugin to the destination
-		$this->copy_page_template( $template_source, $template_destination );
+		// retrive the cache list
+		$templates = wp_cache_get( $cache_key, 'themes' );
+		
+		// remove the old cache
+		wp_cache_delete( $cache_key , 'themes');
 
-	} // end register_project_template
-	
+		// add our template to the templates list.
+		$templates = array_merge( $templates, $this->templates );
+
+		// add the modified cache to allow wordpress to pick it up for listing availble templates
+		wp_cache_add( $cache_key, $templates, 'themes', 1800 );
+
+		return $atts;
+
+	} // end register_project_templates
+
 	/** 
-	 * Removes the template from the theme directory that was added during theme activation.
+	 * Checks if the template is assigned to the page
 	 *
 	 * @version	1.0
 	 * since	1.0
 	 */
-	public function deregister_project_template() {
+	public function view_project_template( $template ) {
 		
-		// Get the path to the theme
-		$theme_dir = get_stylesheet_directory();
-		$template_path = $theme_dir . '/template-example.php';
+		global $post;
+
+		if( !isset( $this->templates[get_post_meta( $post->ID, '_wp_page_template', true )] ) )
+			return $template;
 		
-		// If the template file is in the theme path, delete it.
-		if( file_exists( $template_path ) ) {
-			unlink( $template_path );
-		} // end if
-		
-	} // end deregister_project_template
+		$file = plugin_dir_path( __FILE__ ) . 'templates/' . get_post_meta( $post->ID, '_wp_page_template', true );
 
-	/*--------------------------------------------*
-	 * Helper Methods
-	 *--------------------------------------------*/
+		// Just to be safe, we check if the file exist first
+		if( file_exists( $file ) )
+			return $file;
 
-	/**
-	 * @return string The destination to the plugin directory relative to the currently active theme
-	 */
-	private function get_template_destination() {
-		return get_stylesheet_directory() . '/template-example.php';
-	} // end get_template_destination
+		return $template;
 
-	/**
-	 * @return string The path to the template file relative to the plugin.
-	 */
-	private function get_template_source() {
-		return dirname( __FILE__ ) . '/templates/template-example.php';
-	} // end get_template_source
-
-	/**
-	 * Copies the contents of the template from the source file in the plugin
-	 * to the destination in the current theme directory.
-	 * 
-	 * This works by first creating an empty file, reading the contents of the template file
-	 * then writing it into the empty file in the theme directory.
-	 *
-	 * Note that this version is for demonstration purposes only and does not include proper
-	 * exception handling for when file operations fail.
-	 * 
-	 * @param  string $template_source      The path on which the template resides.
-	 * @param  string $template_destination The path to which the template should be written.
-	 */
-	private function copy_page_template( $template_source, $template_destination ) {
-
-		// After that, check to see if the template already exists. If so don't copy it; otherwise, copy if
-		if( ! file_exists( $template_destination ) ) {
-			
-			// Create an empty version of the file
-			touch( $template_destination );
-			
-			// Read the source file starting from the beginning of the file
-			if( null != ( $template_handle = @fopen( $template_source, 'r' ) ) ) {
-			
-				// Now read the contents of the file into a string. Read up to the length of the source file
-				if( null != ( $template_content = fread( $template_handle, filesize( $template_source ) ) ) ) {
-				
-					// Relinquish the resource
-					fclose( $template_handle );
-					
-				} // end if
-				
-			} // end if
-						
-			// Now open the file for reading and writing
-			if( null != ( $template_handle = @fopen( $template_destination, 'r+' ) ) ) {
-			
-				// Attempt to write the contents of the string
-				if( null != fwrite( $template_handle, $template_content, strlen( $template_content ) ) ) {
-				
-					// Relinquish the resource
-					fclose( $template_handle );
-					
-				} // end if
-
-			} // end if
-			
-		} // end if
-
-	} // end copy_page_template
+	} // end view_project_template
 
 } // end class
 
