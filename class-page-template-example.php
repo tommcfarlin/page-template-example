@@ -112,8 +112,8 @@ class Page_Template_Plugin {
     } // end load_plugin_textdomain
 
 	/**
-	 * Adds our template to the pages cache in order to trick WordPress/
-	 * in thinking the template file exists where it doens't really exist.
+	 * Adds our template to the pages cache in order to trick WordPress
+	 * into thinking the template file exists where it doens't really exist.
 	 *
 	 * @param   array    $atts    The attributes for the page attributes dropdown
 	 * @return  array    $atts    The attributes for the page attributes dropdown
