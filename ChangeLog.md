@@ -1,9 +1,13 @@
-## Changelog
+## ChangeLog
 
 ## 1.0.0 (26 October 2013)
 
 * Adding a `ChangeLog`
 * Updating the `README`
+* Adding the `LICENSE` to the plugin
+* Updating code comments for clarity
+* Moving the plugin header to the core plugin file from the plugin's class
+* Adding a second template to the plugin for additional demonstration purposes
 * Adding a function for retrieving the plugin locale
 * Updating the since tags in the documentation
 * Adding a plugin slug attribute
@@ -18,10 +22,6 @@
 * Renaming the core plugin file to match the name of the plugin
 * Removed the file copy/delete methods and made it cache based. This removes the need to copy and delete files on activation. (Desertsnowman)
 
-## 0.1 (7 March 2013)
+## 0.1.0 (7 March 2013)
 
 * Initial release
-
-## Author Information
-
-Page Template Example originally started and is maintained by [Tom McFarlin](http://twitter.com/tommcfarlin/), but is constantly under development thanks to the contributions from the many WordPress developers throughout the world.
