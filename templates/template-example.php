@@ -2,12 +2,18 @@
 /**
  * Template Name: Example Page Template
  *
- * The template used  to demonstrate how to include 
- * 
- * @package Page Template Example
- * @since 	0.1
- * @version	0.1
+ * The template used to demonstrate how to include
+ *
+ * @package PTE
+ * @since 	1.0.0
+ * @version	1.0.0
  */
 ?>
 
-<h1><?php _e( 'This is an example template.', 'pte' ); ?></h1>
+<?php
+
+	$pte = Page_Template_Example::get_instance();
+	$locale = $pte->get_locale();
+
+?>
+<h1><?php _e( 'This is an example template.', $locale ); ?></h1>
