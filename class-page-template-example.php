@@ -6,13 +6,9 @@
  *
  * @package Page Template Example
  * @version 1.0.0
- * @since 	0.1
+ * @since 	0.1.0
  */
 class Page_Template_Plugin {
-
-	/*--------------------------------------------*
-	 * Attributes
-	 *--------------------------------------------*/
 
     /**
      * Plugin version, used for cache-busting of style and script file references.
@@ -38,7 +34,7 @@ class Page_Template_Plugin {
 	/**
 	 * A reference to an instance of this class.
 	 *
-	 * @since 0.0.1
+	 * @since 0.1.0
 	 *
 	 * @var   Page_Template_Plugin
 	 */
@@ -117,29 +113,33 @@ class Page_Template_Plugin {
 
 	/**
 	 * Adds our template to the pages cache in order to trick WordPress/
-	 * in thinking its a real file.
+	 * in thinking the template file exists where it doens't really exist.
 	 *
+	 * @param   array    $atts    The attributes for the page attributes dropdown
+	 * @return  array    $atts    The attributes for the page attributes dropdown
 	 * @verison	1.0.0
 	 * @since	1.0.0
 	 */
 	public function register_project_templates( $atts ) {
 
-		// create the key used for the themes cache
+		// Create the key used for the themes cache
 		$cache_key = 'page_templates-' . md5( get_theme_root() . '/' . get_stylesheet() );
 
-		// retrieve the cache list. if none exist, prepare an empty array.
+		// Retrieve the cache list. If it doesn't exist, or it's empty prepare an array
 		$templates = wp_cache_get( $cache_key, 'themes' );
 		if ( empty( $templates ) ) {
 			$templates = array();
 		} // end if
 
-		// remove the old cache
+		// Since we've updated the cache, we need to delete the old cache
 		wp_cache_delete( $cache_key , 'themes');
 
-		// add our template to the templates list.
+		// Now add our template to the list of templates by merging our templates
+		// with the existing templates array from the cache.
 		$templates = array_merge( $templates, $this->templates );
 
-		// add the modified cache to allow wordpress to pick it up for listing availble templates
+		// Add the modified cache to allow WordPress to pick it up for listing
+		// available templates
 		wp_cache_add( $cache_key, $templates, 'themes', 1800 );
 
 		return $atts;
