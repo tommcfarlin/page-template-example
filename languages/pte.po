@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Page Template Plugin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-07 08:49-0500\n"
-"PO-Revision-Date: 2013-03-07 08:49-0500\n"
+"POT-Creation-Date: 2013-10-26 08:02-0500\n"
+"PO-Revision-Date: 2013-10-26 08:02-0500\n"
 "Last-Translator: Tom McFarlin <tom@tommcfarlin.com>\n"
 "Language-Team: Tom McFarlin <tom@tommcfarlin.com>\n"
 "Language: en_US\n"
@@ -13,9 +13,13 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Poedit 1.5.7\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: ../templates/template-example.php:13
+#: ../class-page-template-example.php:118
+msgid "Example Page Template"
+msgstr ""
+
+#: ../templates/template-example.php:19
 msgid "This is an example template."
 msgstr ""
