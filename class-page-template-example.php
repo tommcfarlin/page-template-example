@@ -1,34 +1,11 @@
 <?php
-/*
-Plugin Name:  Page Template Plugin
-Plugin URI:   http://github.com/tommcfarlin/page-template-plugin/
-Description:  An example WordPress plugin used to show how to include templates with your plugins and programmatically add them to the active theme
-Version:      1.0.0
-Author:       Tom McFarlin
-Author URI:   http://tommcfarlin.com/
-Author Email: tom@tommcfarlin.com
-License:
-
-  Copyright 2013 Tom McFarlin (tom@tommcfarlin.com)
-
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License, version 2, as
-  published by the Free Software Foundation.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-*/
 
 /**
+ * This plugin allows you to include templates with your plugin so that they can
+ * be added with any theme.
+ *
  * @package Page Template Example
- * @version 0.1
+ * @version 1.0.0
  * @since 	0.1
  */
 class Page_Template_Plugin {
@@ -72,7 +49,7 @@ class Page_Template_Plugin {
 	 *
 	 * @var      array
 	 */
-	protected $templates = array();
+	protected $templates;
 
 
 	/**
@@ -99,10 +76,11 @@ class Page_Template_Plugin {
 	 */
 	private function __construct() {
 
+		$this->templates = array();
 		$this->plugin_locale = 'pte';
 
 		// Grab the translations for the plugin
-		add_action( 'init', array( $this, 'plugin_textdomain' ) );
+		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
 		// Add a filter to the page attributes metabox to inject our template into the page template cache.
 		add_filter('page_attributes_dropdown_pages_args', array( $this, 'register_project_templates' ) );
@@ -115,7 +93,8 @@ class Page_Template_Plugin {
 
 		// Add your templates to this array.
 		$this->templates = array(
-			'template-example.php' => __( 'Example Page Template', $this->plugin_slug );
+			'template-example.php'     => __( 'Example Page Template', $this->plugin_slug ),
+			'template-example-two.php' => __( 'Example Page Template II', $this->plugin_slug )
 		);
 
 
@@ -148,8 +127,11 @@ class Page_Template_Plugin {
 		// create the key used for the themes cache
 		$cache_key = 'page_templates-' . md5( get_theme_root() . '/' . get_stylesheet() );
 
-		// retrive the cache list
+		// retrieve the cache list. if none exist, prepare an empty array.
 		$templates = wp_cache_get( $cache_key, 'themes' );
+		if ( empty( $templates ) ) {
+			$templates = array();
+		} // end if
 
 		// remove the old cache
 		wp_cache_delete( $cache_key , 'themes');
