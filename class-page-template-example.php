@@ -26,10 +26,6 @@ License:
 
 */
 
-if( ! defined( 'PAGE_TEMPLATE_PLUGIN' ) ) {
-	define( 'PAGE_TEMPLATE_PLUGIN', '0.1' );
-} // end if
-
 /**
  * @package Page Template Example
  * @version 0.1
@@ -40,6 +36,16 @@ class Page_Template_Plugin {
 	/*--------------------------------------------*
 	 * Attributes
 	 *--------------------------------------------*/
+
+    /**
+     * Plugin version, used for cache-busting of style and script file references.
+     *
+     * @since   1.0.0
+     *
+     * @var     string
+     */
+    const VERSION = '1.0.0';
+
 
 	/** A reference to an instance of this class. **/
 	private static $instance;
