@@ -47,10 +47,18 @@ class Page_Template_Plugin {
     const VERSION = '1.0.0';
 
 
-	/** A reference to an instance of this class. **/
+	/**
+	 * A reference to an instance of this class.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @var   Page_Template_Plugin
+	 */
 	private static $instance;
 
 	/**
+	 * The array of templates that this plugin tracks.
+	 *
 	 * @var      array
 	 */
 	protected $templates = array();
