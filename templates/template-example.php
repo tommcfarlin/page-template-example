@@ -2,7 +2,8 @@
 /**
  * Template Name: Example Page Template
  *
- * The template used to demonstrate how to include
+ * A template used to demonstrate how to include the template
+ * using this plugin.
  *
  * @package PTE
  * @since 	1.0.0
@@ -12,7 +13,7 @@
 
 <?php
 
-	$pte = Page_Template_Example::get_instance();
+	$pte = Page_Template_Plugin::get_instance();
 	$locale = $pte->get_locale();
 
 ?>
