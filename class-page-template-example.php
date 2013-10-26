@@ -46,6 +46,17 @@ class Page_Template_Plugin {
      */
     const VERSION = '1.0.0';
 
+    /**
+     * Unique identifier for the plugin.
+     *
+     * The variable name is used as the text domain when internationalizing strings
+     * of text.
+     *
+     * @since    1.0.0
+     *
+     * @var      string
+     */
+    protected $plugin_slug;
 
 	/**
 	 * A reference to an instance of this class.
@@ -63,16 +74,14 @@ class Page_Template_Plugin {
 	 */
 	protected $templates = array();
 
-	/*--------------------------------------------*
-	 * Constructor
-	 *--------------------------------------------*/
 
 	/**
-	 * Returns an instance of this class. This is the Singleton design pattern.
+	 * Returns an instance of this class. An implementation of the singleton design pattern.
 	 *
-	 * @return OBJECT 	A reference to an instance of this class.
+	 * @return   Page_Templae_Example    A reference to an instance of this class.
+	 * @since    1.0.0
 	 */
-	public static function getInstance() {
+	public static function get_instance() {
 
 		if( null == self::$instance ) {
 			self::$instance = new Page_Template_Plugin();
@@ -85,11 +94,14 @@ class Page_Template_Plugin {
 	/**
 	 * Initializes the plugin by setting localization, filters, and administration functions.
 	 *
-	 * @version		1.0
-     * @since 		1.0
+	 * @version		1.0.0
+     * @since 		1.0.0
 	 */
 	private function __construct() {
 
+		$this->plugin_locale = 'pte';
+
+		// Grab the translations for the plugin
 		add_action( 'init', array( $this, 'plugin_textdomain' ) );
 
 		// Add a filter to the page attributes metabox to inject our template into the page template cache.
@@ -103,36 +115,33 @@ class Page_Template_Plugin {
 
 		// Add your templates to this array.
 		$this->templates = array(
-			'template-example.php' => 'Example Page Template',
+			'template-example.php' => __( 'Example Page Template', $this->plugin_slug );
 		);
 
 
 	} // end constructor
 
-	/*--------------------------------------------*
-	 * Localization
-	 *--------------------------------------------*/
+    /**
+     * Load the plugin text domain for translation.
+     *
+     * @since    1.0.0
+     */
+    public function load_plugin_textdomain() {
+
+	    $domain = $this->plugin_slug;
+	    $locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+
+	    load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . $domain . '/' . $domain . '-' . $locale . '.mo' );
+	    load_plugin_textdomain( $domain, FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+
+    } // end load_plugin_textdomain
 
 	/**
-	 * Loads the plugin text domain for translation
-	 *
-	 * @version		1.0
-     * @since 		1.0
-	 */
-	public function plugin_textdomain() {
-		load_plugin_textdomain( 'pte', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
-	} // end plugin_textdomain
-
-	/*--------------------------------------------*
-	 * Template Registration & Usage Hooks
-	 *--------------------------------------------*/
-
-	/**
-	 * Adds our template to the pages cache in order to trick wordpress
+	 * Adds our template to the pages cache in order to trick WordPress/
 	 * in thinking its a real file.
 	 *
-	 * @verison	1.0
-	 * @since	1.0
+	 * @verison	1.0.0
+	 * @since	1.0.0
 	 */
 	public function register_project_templates( $atts ) {
 
@@ -158,24 +167,39 @@ class Page_Template_Plugin {
 	/**
 	 * Checks if the template is assigned to the page
 	 *
-	 * @version	1.0
-	 * since	1.0
+	 * @version	1.0.0
+	 * @since	1.0.0
 	 */
 	public function view_project_template( $template ) {
 
 		global $post;
 
-		if( !isset( $this->templates[get_post_meta( $post->ID, '_wp_page_template', true )] ) )
+		if ( ! isset( $this->templates[ get_post_meta( $post->ID, '_wp_page_template', true ) ] ) ) {
 			return $template;
+		} // end if
 
 		$file = plugin_dir_path( __FILE__ ) . 'templates/' . get_post_meta( $post->ID, '_wp_page_template', true );
 
 		// Just to be safe, we check if the file exist first
-		if( file_exists( $file ) )
+		if( file_exists( $file ) ) {
 			return $file;
+		} // end if
 
 		return $template;
 
 	} // end view_project_template
+
+
+	/**
+	 * Retrieves and returns the slug of this plugin. This function should be called on an instance
+	 * of the plugin outside of this class.
+	 *
+	 * @return  string    The plugin's slug used in the locale.
+	 * @version	1.0.0
+	 * @since	1.0.0
+	 */
+	public function get_locale() {
+		return $this->plugin_slug;
+	} // end get_locale
 
 } // end class
