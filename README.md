@@ -2,7 +2,7 @@
 
 An example WordPress plugin used to show how to include templates with your plugins and programmatically add them to the active theme.
 
-You can read more about this plugin and how it works in [this blog post](http://tommcfarlin.com/wordpress-page-template-in-plugin/).
+You can read more about this plugin and how it works in [this blog post](http://tommcfarlin.com/page-template-in-wordpress-plugin/).
 
 ## How It Works
 
