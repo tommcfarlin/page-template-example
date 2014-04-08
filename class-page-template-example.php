@@ -93,6 +93,8 @@ class Page_Template_Plugin {
 			'template-example-two.php' => __( 'Example Page Template II', $this->plugin_slug )
 		);
 
+		$templates = wp_get_theme()->get_page_templates();
+    $templates = array_merge( $templates, $this->templates );
 
 	} // end constructor
 
