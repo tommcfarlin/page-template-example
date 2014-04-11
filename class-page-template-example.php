@@ -87,14 +87,18 @@ class Page_Template_Plugin {
 		// Add a filter to the template include in order to determine if the page has our template assigned and return it's path
 		add_filter('template_include', array( $this, 'view_project_template') );
 
+		// Register hooks that are fired when the plugin is activated, deactivated, and uninstalled, respectively.
+		register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
+
 		// Add your templates to this array.
 		$this->templates = array(
 			'template-example.php'     => __( 'Example Page Template', $this->plugin_slug ),
 			'template-example-two.php' => __( 'Example Page Template II', $this->plugin_slug )
 		);
 
+		// adding support for theme templates to be merged and shown in dropdown
 		$templates = wp_get_theme()->get_page_templates();
-    $templates = array_merge( $templates, $this->templates );
+		$templates = array_merge( $templates, $this->templates );
 
 	} // end constructor
 
@@ -173,6 +177,29 @@ class Page_Template_Plugin {
 
 	} // end view_project_template
 
+	/*--------------------------------------------*
+	 * deactivate the plugin
+	*---------------------------------------------*/
+	static function deactivate( $network_wide ) {
+		foreach($this as $value) {
+			page-template-example::delete_template( $value );
+		}
+		
+	} // end deactivate
+
+	/*--------------------------------------------*
+	 * Delete Templates from Theme
+	*---------------------------------------------*/
+	public function delete_template( $filename ){				
+		$theme_path = get_template_directory();
+		$template_path = $theme_path . '/' . $filename;  
+		if( file_exists( $template_path ) ) {
+			unlink( $template_path );
+		}
+
+		// we should probably delete the old cache
+		wp_cache_delete( $cache_key , 'themes');
+	}
 
 	/**
 	 * Retrieves and returns the slug of this plugin. This function should be called on an instance
