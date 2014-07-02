@@ -162,6 +162,10 @@ class Page_Template_Plugin {
 
 		global $post;
 
+		// If no posts found, return to
+		// avoid "Trying to get property of non-object" error
+		if ( !isset( $post ) ) return $template;
+
 		if ( ! isset( $this->templates[ get_post_meta( $post->ID, '_wp_page_template', true ) ] ) ) {
 			return $template;
 		} // end if
