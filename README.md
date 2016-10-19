@@ -29,7 +29,7 @@ The plugin works like this:
 
 ## License
 
-The WordPress Plugin Boilerplate is licensed under the GPL v2 or later.
+The Page Template Example is licensed under the GPL v2 or later.
 
 > This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License, version 2, as
